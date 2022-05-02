@@ -12,6 +12,7 @@ NUM_ROWS = 24
 NUM_COLUMNS = 8
 
 data = []
+data_dictionary = {}
 total_rows = 0
  
  # Data extraction from the csv file.
@@ -20,6 +21,7 @@ with open(dir_path, newline = '') as File:
     for row in reader:
         if total_rows != 0:
             new_row = []
+            # e.g., row[0][0] takes the first letter (H or L) of the first field of the row (Initial traffic level N).
             initial_traffic = row[0][0] + row[1][0] + row[2][0]
             action = row[3]
             final_traffic = row[4][0] + row[5][0] + row[6][0]
@@ -27,6 +29,7 @@ with open(dir_path, newline = '') as File:
             new_row.append(action)
             new_row.append(final_traffic)
             data.append(new_row)
+
             '''
             print('[\nROW %d]' %i)
             print('Initial traffic level N: ', row[0])
@@ -56,19 +59,22 @@ actions = ['N', 'E', 'W']
 counts = []
 
 # Calculation of probabilities.
-for goal_state_1 in range(len(states)):
-    for goal_state_2 in range(len(states)):
-        for goal_state_3 in range(len(states)):
-            for action in range(len(actions)):
-                for initial_state_1 in range(len(states)):
-                    for initial_state_2 in range(len(states)):
-                        for initial_state_3 in range(len(states)):
+for action in range(len(actions)):
+    for initial_state_1 in range(len(states)):
+        for initial_state_2 in range(len(states)):
+            for initial_state_3 in range(len(states)):
+                for goal_state_1 in range(len(states)):
+                    for goal_state_2 in range(len(states)):
+                        for goal_state_3 in range(len(states)):
 
                             new_row = []
 
+                            # Probabilities order:
+                            #print('P({0}{1}{2} / {3}, {4}{5}{6})' .format(states[goal_state_1], states[goal_state_2], states[goal_state_3], actions[action], states[initial_state_1], states[initial_state_2], states[initial_state_3]))
+
                             initial_traffic = states[initial_state_1] + states[initial_state_2] + states[initial_state_3]
                             action_done = actions[action]
-                            final_traffic = states[goal_state_1] + states[goal_state_3] + states[goal_state_2]
+                            final_traffic = states[goal_state_1] + states[goal_state_2] + states[goal_state_3]
 
                             new_row.append(initial_traffic)
                             new_row.append(action_done)
@@ -79,6 +85,10 @@ for goal_state_1 in range(len(states)):
                             #print('\nCount is: {0}\nData is: {1}' .format(count, new_row))
 
                             counts.append(count)
+
+                            # Testing data into a dictionary with the corresponding keys.
+                            key = states[initial_state_1] + states[initial_state_2] + states[initial_state_3] + '/' + actions[action] + ',' + states[goal_state_1] + states[goal_state_2] + states[goal_state_3]
+                            data_dictionary[key] = count
                             
                             
                             '''
@@ -102,6 +112,9 @@ print(counts)
 print('Expected count: {0}\nReal count: {1}' .format(total_rows, count))
 '''
 
+print('\n\n\nCount of rows from the csv file (using a dictionary):')
+for item in data_dictionary:
+    print('Count({0}) = {1}'.format(item, data_dictionary[item]))
 
 # Separation of counts into different lists to form a matrix (probabilities).
 counter = NUM_COLUMNS
@@ -117,9 +130,12 @@ for count in counts:
         probabilities.append(new_row)
         new_row = []
         counter = NUM_COLUMNS
-        
+
+
+print('\n\n\nCsv counts matrix (Counts):')
 for row in probabilities:
     print(row)
+
 
 # Calculation of probabilities for each row of the matrix.
 matrix = []
@@ -130,29 +146,21 @@ for row in probabilities:
         row_count += item
     
     new_row = []
-    for item in row:
-        new_row.append(round((item/row_count), 6))
+
+    if row_count != 0:
+        for item in row:
+            new_row.append(round((item/row_count), 6))
+    else:
+        for item in row:
+            new_row.append(0)
     
     matrix.append(new_row)
 
 
 # Print the final matrix with all the probabilities (transition matrix).
+print('\n\n\nTransitions matrix (Probabilities):')
 for row in matrix:
     print(row)
-
-
-# Initialization of the matrix of probabilities to 0.
-for i in range(23):
-    probabilities.append([])
-    for j in range(7):
-        probabilities[i].append(0)
-
-'''
-# Printing of the probabilities matrix.
-for i in range(len(probabilities)):
-    print(probabilities[i])
-'''
-
 
 
 '''
