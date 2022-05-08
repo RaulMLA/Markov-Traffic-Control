@@ -22,9 +22,11 @@ def BellmanEquation():
     # When condition is True, the iterations to find the expected values have finished (and they have been found).
     condition = False
     while not condition:
-        #print('Iteration: ', i)
+        print('\nIteration ', i)
+        print('----------------')
         for state in bellman_states:
             current[state] = bellman(state, bellman_states, probabilities, previous)
+            print('V({0}) = {1}' .format(state, current[state]))
 
         # We check if there are no changes in the previous and current dictionary.
         if previous == current:
@@ -35,7 +37,11 @@ def BellmanEquation():
             previous[state] = current[state]
             
         i += 1
-    print('Total iterations: ', (i - 1))
+        
+        '''if i == 4:
+            condition = True'''
+            
+    print('\n\nTotal iterations: ', (i - 1))
     return current
             
 
@@ -47,7 +53,7 @@ def bellman(state, bellman_states, probabilities, previous):
     actions_cost = {"N": 1, "E": 1, "W": 1}
     for action in actions:
         r = actions_cost[action] + summatory(state, action, bellman_states, probabilities, previous)
-        results.append(r)
+        results.append(round(r, 6))
 
     return min(results)
 
