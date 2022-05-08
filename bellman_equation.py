@@ -3,11 +3,13 @@ from probability_calculation import CalculateProbabilities
 
 
 def BellmanEquation():
-    # initialize the dictionaries to 0 in which dict1 contains every vi-1(s) and dict2 all vi(s)
+    """Function which returns a dictionary with the expected values for each state V(S)"""
     states, actions, probabilities = CalculateProbabilities()
     previous = {}
     current = {}
     bellman_states = []
+    # Initialize the dictionaries to 0 in which previous contains every v_(i-1)(s) and current all v_i(s).
+    # Also, bellman_states is filled with all the possible states.
     for initial_state_1 in states:
         for initial_state_2 in states:
             for initial_state_3 in states:
@@ -15,48 +17,47 @@ def BellmanEquation():
                 previous[state] = 0
                 current[state] = 0
                 bellman_states.append(state)
-                            
-    i = 1   
+
+    i = 1
+    # When condition is True, the iterations to find the expected values have finished (and they have been found).
     condition = False
     while not condition:
+        #print('Iteration: ', i)
         for state in bellman_states:
             current[state] = bellman(state, bellman_states, probabilities, previous)
-            if previous[state] != current[state]:
-                previous[state] = current[state]
-                current[state] = 0
 
-        
-        count = 0
-        for key in previous:
-            print('[{0}] Previous: {1}, Current: {2}' .format(i, previous[key], current[key]))
-            if previous[key] == current[key]:
-                count += 1
-        if count == len(bellman_states):
+        # We check if there are no changes in the previous and current dictionary.
+        if previous == current:
             condition = True
+
+        # We copy the content of current into previous to continue with the following operation.
+        for state in bellman_states:
+            previous[state] = current[state]
             
         i += 1
-    print('Iterations: ', (i - 1))
+    print('Total iterations: ', (i - 1))
     return current
             
 
 
 
-def bellman(s, bellman_states, probabilities, previous):
+def bellman(state, bellman_states, probabilities, previous):
     results = []
     actions = ["N", "E", "W"]
     actions_cost = {"N": 1, "E": 1, "W": 1}
-    for a in actions:
-        r = actions_cost[a] + summatory(s, a, bellman_states, probabilities, previous)
+    for action in actions:
+        r = actions_cost[action] + summatory(state, action, bellman_states, probabilities, previous)
         results.append(r)
-    return min(results)       
+
+    return min(results)
 
 
 
 
-def summatory(s, a, bellman_states, probabilities, previous):
+def summatory(state, action, bellman_states, probabilities, previous):
+    """Function which calculates the summatory of the bellman equation: summatory[P(S'|a,S)*V(S)]"""
     sum = 0
     for b in bellman_states:
-        key = b + "|" + a + ',' + s
-        sum = sum + probabilities[key]*previous[b]
-    return round(sum, 6)    
-    
+        key = b + "|" + action + ',' + state
+        sum = sum + probabilities[key] * previous[b]
+    return round(sum, 6)

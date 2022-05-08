@@ -188,8 +188,8 @@ def CalculateProbabilities():
         if counter == NUM_COLUMNS + 1:
             index += 1
     
-    for key in probabilities:
-        print("P({0}) = {1}" .format(key, probabilities[key]))
+    #for key in probabilities:
+        #print("P({0}) = {1}" .format(key, probabilities[key]))
 
 
     '''
