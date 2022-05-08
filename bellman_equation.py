@@ -66,4 +66,4 @@ def summatory(state, action, bellman_states, probabilities, previous):
     for b in bellman_states:
         key = b + "|" + action + ',' + state
         sum = sum + probabilities[key] * previous[b]
-    return round(sum, 6)
+    return sum
