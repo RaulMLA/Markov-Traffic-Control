@@ -1,33 +1,32 @@
 """Module for the calculation of the matrix of count_occurrencesd (transition function)."""
-
 import os
 import csv
 
-def CalculateProbabilities():
+def CalculateProbabilities(states: list, actions: list, file: list) -> dict:
     """Function for the calculations of count_occurrences (transition function)."""
     
     # Definition of constants.
  
     # Number of rows and columns of the transition matrix.
-    NUM_ROWS = 24
-    NUM_COLUMNS = 8
+    NUM_ROWS = len(actions) * pow(len(states), 3)
+    NUM_COLUMNS = pow(len(states), 3)
+
+    #print("Rows: ", NUM_ROWS)
+    #print("Columns: ", NUM_COLUMNS)
 
     '''
     Possible states and actions.
-    · Set of STATES:
+    · Set of states:
         - 'H' -> 'High'
         - 'L' -> 'Low'
-    · Set of ACTIONS:
+    · Set of actions:
         - 'N' -> 'North'
         - 'E' -> 'East'
         - 'W' -> 'West'
     '''
-    STATES = ['H', 'L']
-    ACTIONS = ['N', 'E', 'W']
 
     # Real path of Data.csv to avoid problems during execution.
-    FILE_NAME = "/Data.csv"
-    DIR_PATH = os.path.dirname(os.path.realpath(__file__)) + FILE_NAME
+    DIR_PATH = os.path.dirname(os.path.realpath(__file__)) + file
 
     # Counts from the csv (two models: using a matrix and a dictionary).
     count_occurrences = []
@@ -37,16 +36,15 @@ def CalculateProbabilities():
     probabilities_matrix = []
     probabilities = {}
 
-
-    # Matrix which stores the data of the csv file.
+    # Matrix which stores the extracted data of the csv file.
     data = []
 
     # Total count_occurrences is the number of rows of the file.
     total_rows = 0
     
     # Data extraction from the csv file.
-    with open(DIR_PATH, newline = '') as File:
-        reader = csv.reader(File, delimiter = ";")
+    with open(DIR_PATH, newline = '') as file:
+        reader = csv.reader(file, delimiter = ";")
         for row in reader:
             # We skip the first row (header with titles).
             if total_rows != 0:
@@ -86,13 +84,13 @@ def CalculateProbabilities():
     counts = []
 
     # Calculation of count_occurrences in the order specified in the report.
-    for action in ACTIONS:
-        for initial_state_1 in STATES:
-            for initial_state_2 in STATES:
-                for initial_state_3 in STATES:
-                    for goal_state_1 in STATES:
-                        for goal_state_2 in STATES:
-                            for goal_state_3 in STATES:
+    for action in actions:
+        for initial_state_1 in states:
+            for initial_state_2 in states:
+                for initial_state_3 in states:
+                    for goal_state_1 in states:
+                        for goal_state_2 in states:
+                            for goal_state_3 in states:
 
                                 # New row to count the occurrences in the csv file.
                                 new_row = []
@@ -201,8 +199,4 @@ def CalculateProbabilities():
 
 
     # Return the set of states, the set of actions and the set of count_occurrences.
-    return STATES, ACTIONS, probabilities
-
-
-# Call the function.
-CalculateProbabilities()
+    return probabilities

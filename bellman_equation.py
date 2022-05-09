@@ -1,10 +1,10 @@
-#in order to have de probabilities dictionary
+"""Module for the calculation of the expected values."""
 from probability_calculation import CalculateProbabilities
 
 
-def BellmanEquation():
+def BellmanEquations(states: list, goal_states: list, actions: list, costs: dict, file: str) -> dict:
     """Function which returns a dictionary with the expected values for each state V(S)"""
-    states, actions, probabilities = CalculateProbabilities()
+    probabilities = CalculateProbabilities(states, actions, file)
     previous = {}
     current = {}
     bellman_states = []
@@ -25,7 +25,10 @@ def BellmanEquation():
         print('\nIteration ', i)
         print('----------------')
         for state in bellman_states:
-            current[state] = bellman(state, bellman_states, probabilities, previous)
+            if state in goal_states:
+                current[state] = 0
+            else:
+                current[state] = bellman(state, bellman_states, probabilities, previous, costs)
             print('V({0}) = {1}' .format(state, current[state]))
 
         # We check if there are no changes in the previous and current dictionary.
@@ -38,6 +41,7 @@ def BellmanEquation():
             
         i += 1
         
+        # For debugging purposes:
         '''if i == 4:
             condition = True'''
             
@@ -47,10 +51,9 @@ def BellmanEquation():
 
 
 
-def bellman(state, bellman_states, probabilities, previous):
+def bellman(state, bellman_states, probabilities, previous, actions_cost):
     results = []
     actions = ["N", "E", "W"]
-    actions_cost = {"N": 1, "E": 1, "W": 1}
     for action in actions:
         r = actions_cost[action] + summatory(state, action, bellman_states, probabilities, previous)
         results.append(round(r, 6))

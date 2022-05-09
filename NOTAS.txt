@@ -1,7 +1,0 @@
-POSIBLES COSAS A MEJORAR:
-
-· Para hacer el código más genérico:
-    - Constantes para acciones y estados.
-    - S = len(STATES) y A = len(ACTIONS) para saber cuantos estados y acciones hay.
-    - Cross product de S veces STATES y de A veces ACTIONS para evitar hacer N bucles for cada vez que recorremos la lista.
-    - Después del cross product, contar ocurrencias del csv sabiendo todos los estados posibles.
