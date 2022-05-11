@@ -2,7 +2,9 @@
 from probability_calculation import CalculateProbabilities
 
 
-def BellmanEquations(states: list, goal_states: list, actions: list, costs: dict, file: str) -> dict:
+
+def BellmanEquations(states: list, goal_states: list, actions: list,
+                     costs: dict, file: str) -> dict:
     """Function which returns a dictionary with the expected values for each state V(S)"""
     probabilities = CalculateProbabilities(states, actions, file)
     previous = {}
@@ -28,8 +30,9 @@ def BellmanEquations(states: list, goal_states: list, actions: list, costs: dict
             if state in goal_states:
                 current[state] = 0
             else:
-                current[state] = bellman(state, bellman_states, probabilities, previous, costs)
-            print('V({0}) = {1}' .format(state, current[state]))
+                current[state] = bellman(state, actions, bellman_states, probabilities,
+                                         previous, costs)
+            print('V({0}) = {1}'.format(state, current[state]))
 
         # We check if there are no changes in the previous and current dictionary.
         if previous == current:
@@ -38,29 +41,25 @@ def BellmanEquations(states: list, goal_states: list, actions: list, costs: dict
         # We copy the content of current into previous to continue with the following operation.
         for state in bellman_states:
             previous[state] = current[state]
-            
+
         i += 1
-        
+
         # For debugging purposes:
-        '''if i == 4:
-            condition = True'''
-            
+        if i == 4:
+            condition = True
+
     print('\n\nTotal iterations: ', (i - 1))
     return current
-            
 
 
-
-def bellman(state, bellman_states, probabilities, previous, actions_cost):
+def bellman(state, actions, bellman_states, probabilities, previous, actions_cost):
     results = []
-    actions = ["N", "E", "W"]
     for action in actions:
-        r = actions_cost[action] + summatory(state, action, bellman_states, probabilities, previous)
+        r = actions_cost[action] + summatory(state, action, bellman_states,
+                                             probabilities, previous)
         results.append(round(r, 6))
 
     return min(results)
-
-
 
 
 def summatory(state, action, bellman_states, probabilities, previous):

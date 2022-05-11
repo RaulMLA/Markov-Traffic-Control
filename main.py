@@ -1,6 +1,6 @@
 """Main module"""
 from bellman_equation import BellmanEquations
-#from optimal_policy import OptimalPolicies
+from optimal_policy import OptimalPolicies
 
 
 '''
@@ -22,9 +22,9 @@ FILE = "/Data.csv"
 
 
 
-# ------------------------------------------------ #
-# ----------<------ CALCULATIONS ------>---------- #
-# ------------------------------------------------ #
+# -------------------------------------------------------------------------------------------- #
+# --------------------------------<------ CALCULATIONS ------>-------------------------------- #
+# -------------------------------------------------------------------------------------------- #
 
 # We calculate the expected values using the Bellman Equation for MDPs.
 expected_values = BellmanEquations(STATES, GOAL_STATES, ACTIONS, COSTS, FILE)
@@ -35,12 +35,10 @@ for key in expected_values:
     print('V({0}) = {1}' .format(key, expected_values[key]))
 
 
-'''
 # We calculate the optimal policy.
-optimal_policies = OptimalPolicies(STATES, GOAL_STATES, ACTIONS, expected_values)
+optimal_policies = OptimalPolicies(STATES, GOAL_STATES, ACTIONS, COSTS, expected_values, FILE)
 
 # We print the optimal policies for each state.
 print('\n\n\nRESULTS OF BELLMAN EQUATIONS\n----------------------------')
 for key in optimal_policies:
     print('V({0}) = {1}' .format(key, optimal_policies[key]))
-'''
