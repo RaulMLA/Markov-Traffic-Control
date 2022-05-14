@@ -5,12 +5,11 @@ import csv
 
 def CalculateProbabilities(states: list, actions: list, file: list) -> dict:
     """Function for the calculations of count_occurrences (transition function)."""
-
     # Definition of constants.
 
     # Number of rows and columns of the transition matrix.
-    NUM_ROWS = len(actions) * pow(len(states), 3)
-    NUM_COLUMNS = pow(len(states), 3)
+    #NUM_ROWS = len(actions) * pow(len(states), 3)
+    #NUM_COLUMNS = pow(len(states), 3)
 
     #print("Rows: ", NUM_ROWS)
     #print("Columns: ", NUM_COLUMNS)
@@ -28,12 +27,6 @@ def CalculateProbabilities(states: list, actions: list, file: list) -> dict:
     # Real path of Data.csv to avoid problems during execution.
     DIR_PATH = os.path.dirname(os.path.realpath(__file__)) + file
 
-    # Counts from the csv (two models: using a matrix and a dictionary).
-    count_occurrences = []
-    count_occurrences_dict = {}
-
-    # Transition matrix (two models: using a matrix and a dictionary).
-    probabilities_matrix = []
     probabilities = {}
 
     # Matrix which stores the extracted data of the csv file.
@@ -42,150 +35,64 @@ def CalculateProbabilities(states: list, actions: list, file: list) -> dict:
     # Total count_occurrences is the number of rows of the file.
     total_rows = 0
 
+    # Calculation of all the possible combinations of states.
+    possible_states = []
+    for initial_state_1 in states:
+        for initial_state_2 in states:
+            for initial_state_3 in states:
+                new_state = initial_state_1 + initial_state_2 + initial_state_3
+                possible_states.append(new_state)
+
     # Data extraction from the csv file.
     with open(DIR_PATH, newline='') as file:
         reader = csv.reader(file, delimiter=";")
         for row in reader:
             # We skip the first row (header with titles).
             if total_rows != 0:
-                new_row = []
-                # e.g., row[0][0] takes the first letter (H or L) of the first field of the row (Initial traffic level N).
+                # We create a string with the form <initial_state><action><goal_state> for each row of the file.
                 initial_traffic = row[0][0] + row[1][0] + row[2][0]
                 action = row[3]
                 final_traffic = row[4][0] + row[5][0] + row[6][0]
-                new_row.append(initial_traffic)
-                new_row.append(action)
-                new_row.append(final_traffic)
+                new_row = initial_traffic + action + final_traffic
                 data.append(new_row)
-                '''
-                # Information for debugging.
-                #print('[\nROW %d]' %i)
-                print('Initial traffic level N: ', row[0][0])
-                print('Initial traffic level E: ', row[1][0])
-                print('Initial traffic level W: ', row[2][0])
-                print('Green traffic light: ', row[3])
-                print('Final traffic level N: ', row[4][0])
-                print('Final traffic level E: ', row[5][0])
-                print('Final traffic level W: ', row[6][0])
-                '''
-
             total_rows += 1
 
     total_rows -= 1
-    '''
-    # Print the matrix with all the data.
+    
+    '''# Print the matrix with all the data.
     for i in range(len(data)):
-        print(data[i])
-    '''
-
+        print(data[i])'''
+    
     # List which stores all the counts of the different rows of the csv file (all together).
     counts = []
 
-    # Calculation of count_occurrences in the order specified in the report.
+    # We need to calculate the total count of each row S with the associated action to calculate the final probabilities.
+    row_counts = {}
     for action in actions:
-        for initial_state_1 in states:
-            for initial_state_2 in states:
-                for initial_state_3 in states:
-                    for goal_state_1 in states:
-                        for goal_state_2 in states:
-                            for goal_state_3 in states:
+        for state_1 in possible_states:  
+            limit = len(possible_states)
+            counter = 0
+            for state_2 in possible_states:
+                element = state_1 + action + state_2
+                counter += data.count(element)
+                if limit == 1:
+                    row_counts[state_1 + action] = counter
+                    #print('Count of {0} is {1}' .format(element, counter))
+                limit -= 1
+    
+    # Now we have to calculate the total probabilities for the transition matrix (allocated in a dictionary).
+    for action in actions:
+        for initial_state in possible_states:
+            for final_state in possible_states:
+                element = initial_state + action + final_state
+                if row_counts[initial_state + action] == 0:
+                    value = 0
+                else:
+                    value = data.count(element) / row_counts[initial_state + action]
+                key = final_state + '|' + action + ',' + initial_state
+                probabilities[key] = (value)
+                #print('P({0}) = {1}/{2} = {3}' .format(key, data.count(element), row_counts[initial_state + action], value))
 
-                                # New row to count the occurrences in the csv file.
-                                new_row = []
-
-                                # count_occurrences order:
-                                #print('P({0}{1}{2} / {3}, {4}{5}{6})' .format(states[goal_state_1], states[goal_state_2], states[goal_state_3], actions[action], states[initial_state_1], states[initial_state_2], states[initial_state_3]))
-
-                                initial_traffic = initial_state_1 + initial_state_2 + initial_state_3
-                                action_done = action
-                                final_traffic = goal_state_1 + goal_state_2 + goal_state_3
-
-                                new_row.append(initial_traffic)
-                                new_row.append(action_done)
-                                new_row.append(final_traffic)
-
-                                count = data.count(new_row)
-
-                                #print('\nCount is: {0}\nData is: {1}' .format(count, new_row))
-
-                                counts.append(count)
-
-                                # Testing data into a dictionary with the corresponding keys.
-                                key = goal_state_1 + goal_state_2 + goal_state_3 + '|' \
-                                + action + ',' + initial_state_1 + initial_state_2 + initial_state_3
-                                count_occurrences_dict[key] = count
-                                '''
-                                # Information for debugging.
-                                print(states[goal_state_1])
-                                print(states[goal_state_2])
-                                print(states[goal_state_3])
-                                print(actions[action])
-                                print(states[initial_state_1])
-                                print(states[initial_state_2])
-                                print(states[initial_state_3])
-                                #print('List [{0}]: {1}' .format(i + 1, data[i]))
-                                '''
-    '''
-    print('\n\n\nCount of rows from the csv file (using a dictionary):')
-    for item in count_occurrences_dict:
-        print('Count({0}) = {1}'.format(item, count_occurrences_dict[item]))
-    '''
-
-    # Separation of counts into different lists to form a matrix (count_occurrences).
-    counter = NUM_COLUMNS
-    new_row = []
-
-    for count in counts:
-        if counter != 0:
-            new_row.append(count)
-            counter -= 1
-        if counter == 0:
-            count_occurrences.append(new_row)
-            new_row = []
-            counter = NUM_COLUMNS
-    '''
-    print('\n\n\nCsv counts matrix (Counts):')
-    for row in count_occurrences:
-        print(row)
-    '''
-
-    # Calculation of count_occurrences for each row of the matrix.
-    row_counts = []
-    for row in count_occurrences:
-        row_count = 0
-        for item in row:
-            row_count += item
-
-        row_counts.append(row_count)
-        new_row = []
-
-        if row_count != 0:
-            for item in row:
-                new_row.append(round((item / row_count), 6))
-        else:
-            for item in row:
-                new_row.append(0)
-
-        probabilities_matrix.append(new_row)
-
-    # We calculate the probabilities and we store them in a dictionary (probabilities) which will be returned.
-    index = 0
-    counter = 0
-    for key in count_occurrences_dict:
-        probabilities[key] = round(
-            (count_occurrences_dict[key] / row_counts[index]), 6)
-        counter += 1
-        if counter == NUM_COLUMNS + 1:
-            index += 1
-
-    #for key in probabilities:
-    #print("P({0}) = {1}" .format(key, probabilities[key]))
-    '''
-    # Print the final matrix with all the count_occurrences (transition matrix).
-    print('\n\n\nTransitions matrix (count_occurrences):')
-    for row in probabilities_matrix:
-        print(row)
-    '''
-
-    # Return the set of states, the set of actions and the set of count_occurrences.
     return probabilities
+
+#CalculateProbabilities()

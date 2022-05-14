@@ -48,6 +48,6 @@ def summatory(state, action, probabilities, expected_values, bellman_states):
     sum = 0
     for b in bellman_states:
         key = b + "|" + action + ',' + state
-        sum = sum + probabilities[key] * expected_values[b]    
+        sum = sum + (probabilities[key] * expected_values[b])
     return sum
     
