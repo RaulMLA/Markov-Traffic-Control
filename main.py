@@ -41,4 +41,4 @@ optimal_policies = OptimalPolicies(STATES, GOAL_STATES, ACTIONS, COSTS, expected
 # We print the optimal policies for each state.
 print('\n\n\nRESULTS OF OPTIMAL POLICIES\n---------------------------')
 for key in optimal_policies:
-    print('V({0}) = {1}' .format(key, optimal_policies[key]))
+    print('π*({0}) = {1}' .format(key, optimal_policies[key]))
