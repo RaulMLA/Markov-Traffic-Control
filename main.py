@@ -30,7 +30,7 @@ FILE = "/Data.csv"
 expected_values = BellmanEquations(STATES, GOAL_STATES, ACTIONS, COSTS, FILE)
 
 # We print the expected results of the Bellman Equation for MDPs.
-print('\n\n\nRESULTS OF BELLMAN EQUATIONS\n----------------------------')
+print('\n\n\nRESULTS OF EXPECTED VALUES\n--------------------------')
 for key in expected_values:
     print('V({0}) = {1}' .format(key, expected_values[key]))
 

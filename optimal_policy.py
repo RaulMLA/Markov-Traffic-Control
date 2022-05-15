@@ -10,6 +10,7 @@ def OptimalPolicies(states: list, goal_states: list, actions: list, costs: dict,
     probabilities = CalculateProbabilities(states, actions, file)
 
     bellman_states = []
+    
     # Initialize the dictionaries to 0 in which previous contains every v_(i-1)(s) and current all v_i(s).
     # Also, bellman_states is filled with all the possible states.
     for initial_state_1 in states:

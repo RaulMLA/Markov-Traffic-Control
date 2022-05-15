@@ -5,14 +5,7 @@ import csv
 
 def CalculateProbabilities(states: list, actions: list, file: list) -> dict:
     """Function for the calculations of count_occurrences (transition function)."""
-    # Definition of constants.
 
-    # Number of rows and columns of the transition matrix.
-    #NUM_ROWS = len(actions) * pow(len(states), 3)
-    #NUM_COLUMNS = pow(len(states), 3)
-
-    #print("Rows: ", NUM_ROWS)
-    #print("Columns: ", NUM_COLUMNS)
     '''
     Possible states and actions.
     · Set of states:
@@ -59,13 +52,6 @@ def CalculateProbabilities(states: list, actions: list, file: list) -> dict:
 
     total_rows -= 1
     
-    '''# Print the matrix with all the data.
-    for i in range(len(data)):
-        print(data[i])'''
-    
-    # List which stores all the counts of the different rows of the csv file (all together).
-    counts = []
-
     # We need to calculate the total count of each row S with the associated action to calculate the final probabilities.
     row_counts = {}
     for action in actions:
@@ -77,7 +63,6 @@ def CalculateProbabilities(states: list, actions: list, file: list) -> dict:
                 counter += data.count(element)
                 if limit == 1:
                     row_counts[state_1 + action] = counter
-                    #print('Count of {0} is {1}' .format(element, counter))
                 limit -= 1
     
     # Now we have to calculate the total probabilities for the transition matrix (allocated in a dictionary).
@@ -94,5 +79,3 @@ def CalculateProbabilities(states: list, actions: list, file: list) -> dict:
                 #print('P({0}) = {1}/{2} = {3}' .format(key, data.count(element), row_counts[initial_state + action], value))
 
     return probabilities
-
-#CalculateProbabilities()

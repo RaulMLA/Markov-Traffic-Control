@@ -5,6 +5,7 @@ from probability_calculation import CalculateProbabilities
 def BellmanEquations(states: list, goal_states: list, actions: list,
                      costs: dict, file: str) -> dict:
     """Function which returns a dictionary with the expected values for each state V(S)"""
+                         
     probabilities = CalculateProbabilities(states, actions, file)
     previous = {}
     current = {}
@@ -23,12 +24,9 @@ def BellmanEquations(states: list, goal_states: list, actions: list,
     # When condition is True, the iterations to find the expected values have finished (and they have been found).
     condition = False
     while not condition:
-        print('\nIteration ', i)
-        print('----------------')
         for state in bellman_states:
             if state not in goal_states:
                 current[state] = bellman(state, actions, bellman_states, probabilities, previous, costs)
-            print('V({0}) = {1}'.format(state, current[state]))
 
         # We check if there are no changes in the previous and current dictionary.
         if previous == current:
@@ -40,10 +38,6 @@ def BellmanEquations(states: list, goal_states: list, actions: list,
 
         i += 1
     
-        # For debugging purposes (force i iterations):
-        '''if i == 4:
-            condition = True
-        '''
     print('\n\nTotal iterations: ', (i - 1))
     return current
 
@@ -55,7 +49,6 @@ def bellman(state, actions, bellman_states, probabilities, previous, actions_cos
                                              probabilities, previous)
         results.append(round(r, 6))
 
-    #print(min(results))
     return min(results)
 
 
@@ -64,6 +57,5 @@ def summatory(state, action, bellman_states, probabilities, previous):
     sum = 0
     for b in bellman_states:
         key = b + "|" + action + ',' + state
-        #print('P({0}) = {1}' .format(key, probabilities[key]))
         sum = sum + (probabilities[key] * previous[b])
     return sum
